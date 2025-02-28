@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TheirStory API Guide</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h1 {
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+        }
+        h2 {
+            color: #2980b9;
+            margin-top: 30px;
+        }
+        h3 {
+            color: #3498db;
+            margin-top: 25px;
+        }
+        code {
+            font-family: monospace;
+            background-color: #f8f8f8;
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-size: 90%;
+        }
+        pre {
+            background-color: #f8f8f8;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            border: 1px solid #ddd;
+        }
+        .endpoint-divider {
+            border-top: 1px solid #eee;
+            margin: 40px 0;
+        }
+        .index-container {
+            background-color: #f8f8f8;
+            padding: 20px;
+            border-radius: 5px;
+            margin-bottom: 30px;
+            border-left: 5px solid #3498db;
+        }
+        .index-container ul {
+            list-style-type: none;
+            padding-left: 10px;
+        }
+        .index-container li {
+            margin-bottom: 8px;
+        }
+        .index-container a {
+            color: #3498db;
+            text-decoration: none;
+        }
+        .index-container a:hover {
+            text-decoration: underline;
+        }
+        .param-table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 20px 0;
+        }
+        .param-table th, .param-table td {
+            border: 1px solid #ddd;
+            padding: 8px 12px;
+            text-align: left;
+        }
+        .param-table th {
+            background-color: #f2f2f2;
+        }
+        .param-table tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        .endpoint-url {
+            display: flex;
+            align-items: center;
+            margin: 10px 0;
+            background-color: #f1f9ff;
+            padding: 8px 12px;
+            border-radius: 4px;
+            border-left: 4px solid #3498db;
+        }
+        .endpoint-url code {
+            flex-grow: 1;
+            background: none;
+            padding: 0;
+        }
+        .copy-btn {
+            background-color: #f1f9ff;
+            border: none;
+            cursor: pointer;
+            padding: 4px 8px;
+            color: #3498db;
+            font-size: 16px;
+            margin-left: 10px;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+        }
+        .copy-btn:hover {
+            background-color: #e1f0fe;
+        }
+        .http-method {
+            font-weight: bold;
+            color: #27ae60;
+            margin-right: 10px;
+        }
+        .response-section {
+            margin-top: 20px;
+        }
+        .field-list {
+            margin-left: 20px;
+        }
+        .field-list li {
+            margin-bottom: 5px;
+        }
+    </style>
+    <script>
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text)
+                .then(() => {
+                    const button = event.currentTarget;
+                    const originalHTML = button.innerHTML;
+                    button.innerHTML = `
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="green" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>`;
+                    setTimeout(() => {
+                        button.innerHTML = originalHTML;
+                    }, 1500);
+                })
+                .catch(err => {
+                    console.error('Failed to copy text: ', err);
+                    alert('Failed to copy to clipboard. Please try again.');
+                });
+        }
+    </script>
+</head>
+<body>
+    <h1>TheirStory API Guide</h1>
+    
+    <div class="index-container">
+        <h2>API Endpoints</h2>
+        <ul>
+            <li><a href="#overview">Overview</a></li>
+            <li><a href="#authentication">Authentication</a></li>
+            <li><a href="#current-user">Current User Information</a></li>
+            <li><a href="#projects">Projects</a></li>
+            <li><a href="#organization">Organization</a></li>
+            <li><a href="#stories">Stories</a></li>
+            <li><a href="#groups">Groups</a></li>
+            <li><a href="#integration">Integration with Aviary</a></li>
+            <li><a href="#feature-flags">Feature Flags</a></li>
+            <li><a href="#organization-settings">Organization Settings</a></li>
+            <li><a href="#usage-limits">Usage Limits</a></li>
+            <li><a href="#error-handling">Error Handling</a></li>
+            <li><a href="#security">Security Considerations</a></li>
+        </ul>
+    </div>
+
+    <section id="overview">
+        <h2>Overview</h2>
+        <p>TheirStory provides a web-based interviewing and storytelling platform that helps families and organizations collect and make accessible audiovisual oral histories. This API guide details how to interact with the TheirStory API to access user information and associated features.</p>
+    </section>
+
+    <div class="endpoint-divider"></div>
+
+    <section id="authentication">
+        <h2>Authentication</h2>
+        <p>The API uses JWT (JSON Web Tokens) for authentication. Tokens are returned in API responses and should be included in subsequent requests.</p>
+    </section>
+
+    <div class="endpoint-divider"></div>
+
+    <section id="current-user">
+        <h2>API Endpoints</h2>
+        
+        <h3>Current User Information</h3>
+        <p>Retrieves information about the currently authenticated user.</p>
+
+        <div class="endpoint-url">
+            <span class="http-method">GET</span>
+            <code>https://api.theirstory.io/current_user</code>
+            <button class="copy-btn" onclick="copyToClipboard('https://api.theirstory.io/current_user')">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
+                    <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
+                </svg>
+            </button>
+        </div>
+
+        <h4>Query Parameters:</h4>
+        <ul>
+            <li><code>visitorId</code> (required): Unique identifier for the visitor/session</li>
+        </ul>
+
+        <h4>Example Request:</h4>
+        <div class="endpoint-url">
+            <span class="http-method">GET</span>
+            <code>https://api.theirstory.io/current_user?visitorId=7fe32a19-84c5-4921-b517-29d7c8e54f3a</code>
+            <button class="copy-btn" onclick="copyToClipboard('https://api.theirstory.io/current_user?visitorId=7fe32a19-84c5-4921-b517-29d7c8e54f3a')">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
+                    <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
+                </svg>
+            </button>
+        </div>
+
+        <div class="response-section">
+            <h4>Response:</h4>
+            <p>The response includes detailed information about the user, their role, associated organizations, and feature access.</p>
+
+            <h4>Response Fields:</h4>
+            <ul class="field-list">
+                <li><code>token</code>: JWT authentication token</li>
+                <li><code>full_name</code>: User's full name</li>
+                <li><code>user_id</code>: Unique identifier for the user</li>
+                <li><code>role</code>: User's role in the system (e.g., "admin")</li>
+                <li><code>email</code>: User's email address</li>
+                <li><code>aviary_client</code>: Aviary client identifier</li>
+                <li><code>aviary_token</code>: Token for Aviary integration</li>
+                <li><code>aviary_uid</code>: User identifier for Aviary</li>
+                <li><code>aviary_user_details</code>: Detailed information about the user's Aviary profile
+                    <ul>
+                        <li><code>id</code>: Aviary user ID</li>
+                        <li><code>email</code>: User's email in Aviary</li>
+                        <li><code>first_name</code>: User's first name</li>
+                        <li><code>last_name</code>: User's last name</li>
+                        <li><code>photo_file_name</code>: Optional filename for user's photo</li>
+                        <li><code>photo_content_type</code>: Media type of user's photo</li>
+                        <li><code>organizations</code>: List of organizations the user belongs to
+                            <ul>
+                                <li><code>id</code>: Organization ID</li>
+                                <li><code>name</code>: Organization name</li>
+                                <li><code>subdomain</code>: Organization subdomain</li>
+                                <li><code>custom_domain</code>: Optional custom domain</li>
+                                <li><code>description</code>: HTML description of the organization</li>
+                                <li><code>addresses</code>: Physical addresses associated with the organization</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+                <li><code>feature_flags</code>: Enabled features for the user
+                    <ul>
+                        <li><code>enableTwilioVideo</code>: Boolean indicating if Twilio video is enabled</li>
+                        <li><code>localRecordingMimeType</code>: MIME type for local recordings</li>
+                        <li><code>disableAutomaticResolutionSwitching</code>: Boolean to control resolution switching</li>
+                        <li><code>autoChaptering</code>: Boolean to enable/disable automatic chapter creation</li>
+                    </ul>
+                </li>
+                <li><code>organization_info</code>: Information about the user's organization
+                    <ul>
+                        <li><code>permanent_org</code>: Permanent organization details</li>
+                        <li><code>settings</code>: Organization-specific settings
+                            <ul>
+                                <li><code>transcription_service</code>: Service used for transcription</li>
+                                <li><code>filler_words</code>: Boolean to include/exclude filler words in transcription</li>
+                                <li><code>vocabulary</code>: Custom vocabulary for transcription</li>
+                                <li><code>auto_chaptering</code>: Boolean for automatic chapter creation</li>
+                                <li><code>summary_prompt</code>: Prompt used for generating summaries</li>
+                                <li><code>chaptering_prompt</code>: Prompt used for generating chapters</li>
+                            </ul>
+                        </li>
+                        <li><code>branding</code>: Boolean for custom branding</li>
+                        <li><code>activity</code>: Boolean for activity tracking</li>
+                        <li><code>org_manager_view_all</code>: Permission setting for organization managers</li>
+                        <li><code>aviary_export_allowed</code>: Boolean for Aviary export permission</li>
+                        <li><code>require_session_passwords</code>: Boolean for session password requirement</li>
+                        <li><code>local_recordings_allowed</code>: Boolean for local recording permission</li>
+                        <li><code>groups</code>: List of group IDs</li>
+                        <li><code>organization_name</code>: Name of the organization</li>
+                        <li><code>organizational_code</code>: Unique code for the organization</li>
+                        <li><code>credits</code>: Available credits</li>
+                        <li><code>maxProjectsAllowed</code>: Maximum number of allowed projects</li>
+                        <li><code>projects</code>: Current number of projects</li>
+                        <li><code>recording_hours</code>: Hours of recordings</li>
+                    </ul>
+                </li>
+                <li><code>api_version</code>: Version of the API</li>
+                <li><code>create_gallery</code>: Boolean permission for gallery creation</li>
+            </ul>
+
+            <h4>Example Response:</h4>
+            <pre><code>{
+    "token": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI4NDc2MjkzOTQ4NjMzIiwiaHR0cHM6Ly90aGVpcnN0b3J5LmlvL3Zpc2l0b3ItaWQiOiI3ZmUzMmExOS04NGM1LTQ5MjEtYjUxNy0yOWQ3YzhlNTRmM2EiLCJpYXQiOjE3MzM0ODUyMDF9.AoBg5ub7DvhJxYz8KpLn",
+    "full_name": "Jane Smith",
+    "user_id": "847629394863",
+    "role": "admin",
+    "email": "jane.smith@example.com",
+    "aviary_client": "482LpoT67YcnMsW13rv5",
+    "aviary_token": "t9Jm4wP3zRq7SxK2",
+    "aviary_uid": "jane.smith@example.com",
+    "aviary_user_details": {
+        "id": 12345,
+        "email": "jane.smith@example.com",
+        "first_name": "Jane",
+        "last_name": "Smith",
+        "photo_file_name": null,
+        "photo_content_type": null,
+        "organizations": [
+            {
+                "id": 78,
+                "name": "Community Archives Project",
+                "subdomain": "communityarchives",
+                "custom_domain": "",
+                "description": "<p>The Community Archives Project collects and preserves local stories through audio and video interviews.</p>",
+                "addresses": [
+                    {
+                        "address_line_1": "123 Main Street",
+                        "address_line_2": "Suite 405",
+                        "city": "Riverdale",
+                        "state": "NY",
+                        "zipcode": "10463",
+                        "country": "US"
+                    }
+                ]
+            },
+            {
+                "id": 92,
+                "name": "Metro Historical Society",
+                "subdomain": "metrohistory",
+                "custom_domain": "",
+                "description": "<p>The Metro Historical Society works to document and preserve the cultural heritage of our city's diverse communities.</p>",
+                "addresses": [
+                    {
+                        "address_line_1": "456 Heritage Avenue",
+                        "address_line_2": "",
+                        "city": "Metro City",
+                        "state": "CA",
+                        "zipcode": "90210",
+                        "country": "US"
+                    }
+                ]
+            }
+        ]
+    },
+    "feature_flags": {
+        "enableTwilioVideo": true,
+        "localRecordingMimeType": "video/webm;codecs=vp8,opus",
+        "disableAutomaticResolutionSwitching": false,
+        "autoChaptering": true,
+        "_id": "82af75cb42d67138ac9f4d21"
+    },
+    "organization_info": {
+        "permanent_org": {
+            "export_allowed": true,
+            "archive_nbr": "07kp-2341"
+        },
+        "settings": {
+            "transcription_service": "cloudconvert",
+            "filler_words": false,
+            "vocabulary": ["genealogy", "archives", "cultural heritage"],
+            "auto_chaptering": true,
+            "summary_prompt": "Create a concise summary of this oral history interview focusing on the key topics, historical events, and personal experiences discussed.",
+            "chaptering_prompt": "Divide this interview into logical chapters based on topic changes and significant moments. Each chapter should include a timecode, title, brief summary, and relevant keywords."
+        },
+        "branding": true,
+        "_id": "6ab92cd3e7f14502937654a2",
+        "activity": true,
+        "org_manager_view_all": true,
+        "aviary_export_allowed": true,
+        "require_session_passwords": true,
+        "local_recordings_allowed": true,
+        "groups": [
+            "7ac892d3f4e25613ba98765c",
+            "8bd903e4g5f36724cb09876d",
+            "9ce014f5h6g47835dc10987e"
+        ],
+        "organization_name": "Community Archives Admin",
+        "organizational_code": "ca_admin_854237",
+        "created_at": "2023-04-15T14:27:42.519Z",
+        "__v": 5,
+        "allow_dial_in": true,
+        "local_recordings_polyfill": false,
+        "credits": 1750000,
+        "maxProjectsAllowed": 300,
+        "projects": 187,
+        "recording_hours": 428,
+        "backgroundUrl": "uploads/projectbackgrounds/KpL8sMnO7qRtUvWxYz9A.jpg"
+    },
+    "api_version": "2.7.4",
+    "create_gallery": true
+}</code></pre>
+        </div>
+    </section>
+
+    <div class="endpoint-divider"></div>
+
+    <section id="projects">
+        <h3>Projects</h3>
+        <p>Retrieves information about projects the user has access to.</p>
+
+        <div class="endpoint-url">
+            <span class="http-method">GET</span>
+            <code>https://api.theirstory.io/projects</code>
+            <button class="copy-btn" onclick="copyToClipboard('https://api.theirstory.io/projects')">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
+                    <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
+                </svg>
+            </button>
+        </div>
+
+        <div class="response-section">
+            <h4>Response:</h4>
+            <p>The response is an array of project objects with details about each project.</p>
+
+            <h4>Response Fields:</h4>
+            <ul class="field-list">
+                <li><code>_id</code>: Unique identifier for the project</li>
+                <li><code>name</code>: Name of the project</li>
+                <li><code>description</code>: Description of the project</li>
+                <li><code>creator</code>: ID of the user who created the project</li>
+                <li><code>backgroundUrl</code>: Path to the background image</li>
+                <li><code>displayTitle</code>: Boolean indicating if the title should be displayed</li>
+                <li><code>defaultProjectForOrganization</code>: Boolean indicating if this is the default project</li>
+                <li><code>organization</code>: Organization ID that owns the project</li>
+                <li><code>created_at</code>: Timestamp of when the project was created</li>
+                <li><code>__v</code>: Version number</li>
+                <li><code>view_only_code</code>: Code for view-only access</li>
+                <li><code>view_only_code_created_at</code>: Timestamp when view-only code was created</li>
+                <li><code>member_code</code>: Code for member access</li>
+                <li><code>member_code_created_at</code>: Timestamp when member code was created</li>
+                <li><code>project_manager_code</code>: Code for project manager access</li>
+                <li><code>project_manager_code_created_at</code>: Timestamp when project manager code was created</li>
+                <li><code>projectBackgroundUrl</code>: Full URL to the background image</li>
+                <li><code>folders</code>: Array of folder objects belonging to the project
+                    <ul>
+                        <li><code>_id</code>: Unique identifier for the folder</li>
+                        <li><code>name</code>: Name of the folder</li>
+                        <li><code>creator</code>: ID of the user who created the folder</li>
+                        <li><code>project</code>: Project ID the folder belongs to</li>
+                        <li><code>defaultFolderForProject</code>: Boolean indicating if this is the default folder</li>
+                        <li><code>created_at</code>: Timestamp of when the folder was created</li>
+                        <li><code>__v</code>: Version number</li>
+                        <li><code>fu</code>: Array of folder user objects
+                            <ul>
+                                <li><code>_id</code>: Unique identifier for the folder user relationship</li>
+                                <li><code>user</code>: User ID</li>
+                                <li><code>accepted</code>: Boolean indicating if the user accepted the folder invitation</li>
+                                <li><code>creator</code>: Boolean indicating if the user is the creator</li>
+                                <li><code>folder</code>: Folder ID</li>
+                                <li><code>created_at</code>: Timestamp when the relationship was created</li>
+                                <li><code>__v</code>: Version number</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+                <li><code>organizationName</code>: Name of the organization the project belongs to</li>
+                <li><code>storiesInProject</code>: Count of stories in the project</li>
+                <li><code>isManager</code>: Boolean indicating if the current user is a manager of this project</li>
+            </ul>
+
+            <h4>Example Response:</h4>
+            <pre><code>[
+  {
+    "_id": "proj123456789",
+    "name": "Community Archives",
+    "description": "Archive of local community stories and interviews",
+    "creator": "user987654321",
+    "backgroundUrl": "uploads/projectbackgrounds/community-archives-bg.jpg",
+    "displayTitle": true,
+    "defaultProjectForOrganization": false,
+    "organization": "org123456789",
+    "created_at": "2024-01-15T14:26:14.086Z",
+    "__v": 0,
+    "view_only_code": "aBcD1234EfGh5i6",
+    "view_only_code_created_at": "2024-01-15T14:26:58.682Z",
+    "member_code": "jKlM7890nOpQ1r2",
+    "member_code_created_at": "2024-01-15T14:26:58.987Z",
+    "project_manager_code": "sTuV3456wXyZ7a8",
+    "project_manager_code_created_at": "2024-10-15T14:30:21.837Z",
+    "projectBackgroundUrl": "https://storage.example.com/uploads/projectbackgrounds/community-archives-bg.jpg?token=abc123",
+    "folders": [
+      {
+        "_id": "fold123456789",
+        "name": "Senior Interviews",
+        "creator": "user987654321",
+        "project": "proj123456789",
+        "defaultFolderForProject": false,
+        "created_at": "2024-01-20T12:57:05.461Z",
+        "__v": 0,
+        "fu": [
+          {
+            "_id": "foldu123456789",
+            "user": "user987654321",
+            "accepted": true,
+            "creator": true,
+            "folder": "fold123456789",
+            "created_at": "2024-01-20T12:57:05.484Z",
+            "__v": 0
+          }
+        ]
+      }
+    ],
+    "organizationName": "Community Archives Organization",
+    "storiesInProject": 32,
+    "isManager": true
+  },
+  {
+    "_id": "proj987654321",
+    "name": "Oral History Collection",
+    "description": "Collection of oral histories from community members",
+    "creator": "user123456789",
+    "backgroundUrl": "uploads/projectbackgrounds/oral-history-bg.jpg",
+    "displayTitle": true,
+    "defaultProjectForOrganization": false,
+    "organization": "org987654321",
+    "created_at": "2024-02-10T19:08:14.209Z",
+    "__v": 0,
+    "view_only_code": "bCdE2345fGhI6j7",
+    "view_only_code_created_at": "2024-02-10T19:36:20.241Z",
+    "member_code": "kLmN8901oPqR2s3",
+    "member_code_created_at": "2024-02-25T15:50:06.822Z",
+    "projectBackgroundUrl": "https://storage.example.com/uploads/projectbackgrounds/oral-history-bg.jpg?token=def456",
+    "folders": [],
+    "organizationName": "Oral History Foundation",
+    "storiesInProject": 18,
+    "isManager": false
+  }
+]</code></pre>
+        </div>
+    </section>
+
+    <div class="endpoint-divider"></div>
+
+    <section id="organization">
+        <h3>Organization</h3>
+        <p>Retrieves information about organizations that the user has access to.</p>
+
+        <div class="endpoint-url">
+            <span class="http-method">GET</span>
+            <code>https://api.theirstory.io/organization</code>
+            <button class="copy-btn" onclick="copyToClipboard('https://api.theirstory.io/organization')">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
+                    <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
+                </svg>
+            </button>
+        </div>
+
+        <div class="response-section">
+            <h4>Response:</h4>
+            <p>The response includes an array of organization objects with details about each organization the user has access to.</p>
+
+            <h4>Response Fields:</h4>
+            <ul class="field-list">
+                <li><code>organizations</code>: Array of organization objects, each containing:
+                    <ul>
+                        <li><code>_id</code>: Unique identifier for the organization</li>
+                        <li><code>activity</code>: Boolean indicating if the organization is active</li>
+                        <li><code>org_manager_view_all</code>: Boolean controlling manager view permissions</li>
+                        <li><code>aviary_export_allowed</code>: Boolean for Aviary export permission</li>
+                        <li><code>require_session_passwords</code>: Boolean for session password requirement</li>
+                        <li><code>groups</code>: Array of group IDs</li>
+                        <li><code>organization_name</code>: Name of the organization</li>
+                        <li><code>organizational_code</code>: Unique code for the organization</li>
+                        <li><code>created_at</code>: Creation timestamp</li>
+                        <li><code>__v</code>: Version number</li>
+                        <li><code>local_recordings_polyfill</code>: Boolean to enable recording polyfill</li>
+                        <li><code>allow_dial_in</code>: Boolean to allow dial-in functionality</li>
+                        <li><code>local_recordings_allowed</code>: Boolean for local recording permission</li>
+                        <li><code>permanent_org</code>: Object with organization permanence details</li>
+                        <li><code>credits</code>: Available credits</li>
+                        <li><code>backgroundUrl</code>: URL to the organization's background image</li>
+                        <li><code>maxProjectsAllowed</code>: Maximum number of allowed projects</li>
+                        <li><code>projects</code>: Current number of projects</li>
+                        <li><code>recording_hours</code>: Available recording hours</li>
+                        <li><code>branding</code>: Boolean for custom branding</li>
+                        <li><code>settings</code>: Object with organization settings
+                            <ul>
+                                <li><code>transcription_service</code>: Service used for transcription</li>
+                                <li><code>filler_words</code>: Boolean to include/exclude filler words</li>
+                                <li><code>vocabulary</code>: Array of custom vocabulary words</li>
+                                <li><code>auto_chaptering</code>: Boolean for automatic chapter creation</li>
+                                <li><code>summary_prompt</code>: Prompt for summary generation</li>
+                                <li><code>chaptering_prompt</code>: Prompt for chapter generation</li>
+                            </ul>
+                        </li>
+                        <li><code>users</code>: Array of user objects belonging to the organization</li>
+                    </ul>
+                </li>
+            </ul>
+
+            <h4>Example Response:</h4>
+            <pre><code>{
+  "organizations": [
+    {
+      "_id": "org123456789",
+      "activity": true,
+      "org_manager_view_all": true,
+      "aviary_export_allowed": true,
+      "require_session_passwords": false,
+      "groups": ["group1234", "group5678", "group9012"],
+      "organization_name": "Community Archives Project",
+      "organizational_code": "cap_admin_2023",
+      "created_at": "2023-04-15T14:27:42.519Z",
+      "__v": 5,
+      "local_recordings_polyfill": false,
+      "allow_dial_in": true,
+      "local_recordings_allowed": true,
+      "permanent_org": {
+        "export_allowed": true,
+        "archive_nbr": "07kp-2341"
+      },
+      "credits": 1750000,
+      "backgroundUrl": "uploads/projectbackgrounds/community-archives-bg.jpg",
+      "maxProjectsAllowed": 300,
+      "projects": 187,
+      "recording_hours": 428,
+      "branding": true,
+      "settings": {
+        "transcription_service": "cloudconvert",
+        "filler_words": false,
+        "vocabulary": ["oral history", "archives", "cultural heritage"],
+        "auto_chaptering": true,
+        "summary_prompt": "Create a concise summary of this oral history interview focusing on the key topics, historical events, and personal experiences discussed.",
+        "chaptering_prompt": "Divide this interview into logical chapters based on topic changes and significant moments."
+      },
+      "users": [
+        {
+          "_id": "user123456",
+          "is_verified": false,
+          "role": "admin",
+          "stories": [],
+          "full_name": "Emma Johnson",
+          "email": "emma.johnson@example.com",
+          "organization": "org123456789",
+          "signed_up": "2023-05-12T15:32:47.821Z",
+          "__v": 0,
+          "create_gallery": true,
+          "featureFlags": {
+            "enableTwilioVideo": true,
+            "localRecordingMimeType": "video/webm;codecs=vp8,opus",
+            "disableAutomaticResolutionSwitching": false,
+            "autoChaptering": true,
+            "_id": "flag123456"
+          }
+        }
+      ]
+    }
+  ]
+}</code></pre>
+        </div>
+    </section>
+
+    <div class="endpoint-divider"></div>
+
+    <section id="stories">
+        <h3>Stories</h3>
+        <p>Retrieves information about stories (recordings) with pagination support.</p>
+
+        <div class="endpoint-url">
+            <span class="http-method">GET</span>
+            <code>https://api.theirstory.io/stories/</code>
+            <button class="copy-btn" onclick="copyToClipboard('https://api.theirstory.io/stories/')">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
+                    <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
+                </svg>
+            </button>
+        </div>
+
+        <h4>Query Parameters:</h4>
+        <ul>
+            <li><code>pageSize</code> (optional): Number of items per page (default: 15)</li>
+            <li><code>page</code> (optional): Page number to retrieve (default: 1)</li>
+        </ul>
+
+        <div class="endpoint-url">
+            <span class="http-method">GET</span>
+            <code>https://api.theirstory.io/stories/?pageSize=15&page=1</code>
+            <button class="copy-btn" onclick="copyToClipboard('https://api.theirstory.io/stories/?pageSize=15&page=1')">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
+                    <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
+                </svg>
+            </button>
+        </div>
+
+        <div class="response-section">
+            <h4>Response:</h4>
+            <p>The response includes pagination information and an array of story objects with comprehensive details about each recording.</p>
+
+            <h4>Response Fields:</h4>
+            <ul class="field-list">
+                <li><code>page</code>: Current page number</li>
+                <li><code>total</code>: Total number of stories</li>
+                <li><code>items</code>: Array of story objects, each containing details about the recording</li>
+            </ul>
+        </div>
+    </section>
+
+    <div class="endpoint-divider"></div>
+
+    <section id="groups">
+        <h3>Groups</h3>
+        <p>Retrieves information about groups within an organization.</p>
+
+        <div class="endpoint-url">
+            <span class="http-method">GET</span>
+            <code>https://api.theirstory.io/groups</code>
+            <button class="copy-btn" onclick="copyToClipboard('https://api.theirstory.io/groups')">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
+                    <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
+                </svg>
+            </button>
+        </div>
+    </section>
+
+    <div class="endpoint-divider"></div>
+
+    <section id="integration">
+        <h3>Integration with Aviary</h3>
+        <p>Endpoints for integration with the Aviary platform.</p>
+
+        <div class="endpoint-url">
+            <span class="http-method">GET</span>
+            <code>https://api.theirstory.io/aviary/exports</code>
+            <button class="copy-btn" onclick="copyToClipboard('https://api.theirstory.io/aviary/exports')">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
+                    <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
+                </svg>
+            </button>
+        </div>
+    </section>
+
+    <div class="endpoint-divider"></div>
+
+    <section id="feature-flags">
+        <h3>Feature Flags</h3>
+        <p>Retrieves feature flag information for the current user.</p>
+
+        <div class="endpoint-url">
+            <span class="http-method">GET</span>
+            <code>https://api.theirstory.io/feature-flags</code>
+            <button class="copy-btn" onclick="copyToClipboard('https://api.theirstory.io/feature-flags')">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
+                    <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
+                </svg>
+            </button>
+        </div>
+    </section>
+
+    <div class="endpoint-divider"></div>
+
+    <section id="organization-settings">
+        <h3>Organization Settings</h3>
+        <p>Retrieves and updates organization-specific settings.</p>
+
+        <div class="endpoint-url">
+            <span class="http-method">GET</span>
+            <code>https://api.theirstory.io/organization-settings</code>
+            <button class="copy-btn" onclick="copyToClipboard('https://api.theirstory.io/organization-settings')">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
+                    <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
+                </svg>
+            </button>
+        </div>
+    </section>
+
+    <div class="endpoint-divider"></div>
+
+    <section id="usage-limits">
+        <h3>Usage Limits</h3>
+        <p>Retrieves information about usage limits for the organization.</p>
+
+        <div class="endpoint-url">
+            <span class="http-method">GET</span>
+            <code>https://api.theirstory.io/usage</code>
+            <button class="copy-btn" onclick="copyToClipboard('https://api.theirstory.io/usage')">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
+                    <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
+                </svg>
+            </button>
+        </div>
+    </section>
+
+    <div class="endpoint-divider"></div>
+
+    <section id="error-handling">
+        <h3>Error Handling</h3>
+        <p>The API uses standard HTTP status codes to indicate success or failure of requests. Error responses include detailed information about the error and possible solutions.</p>
+        
+        <h4>Common Error Codes:</h4>
+        <ul>
+            <li><strong>400</strong> - Bad Request: The request was malformed or contained invalid parameters</li>
+            <li><strong>401</strong> - Unauthorized: Authentication is required or has failed</li>
+            <li><strong>403</strong> - Forbidden: The authenticated user doesn't have permission for the requested operation</li>
+            <li><strong>404</strong> - Not Found: The requested resource does not exist</li>
+            <li><strong>429</strong> - Too Many Requests: Rate limit has been exceeded</li>
+            <li><strong>500</strong> - Internal Server Error: An unexpected error occurred on the server</li>
+        </ul>
+    </section>
+
+    <div class="endpoint-divider"></div>
+
+    <section id="security">
+        <h3>Security Considerations</h3>
+        <p>When working with the TheirStory API, keep the following security considerations in mind:</p>
+        
+        <ul>
+            <li>Store API tokens securely and never expose them in client-side code</li>
+            <li>Implement proper token refresh mechanisms to maintain secure sessions</li>
+            <li>Use HTTPS for all API requests to ensure data is encrypted in transit</li>
+            <li>Follow the principle of least privilege when requesting access to user data</li>
+            <li>Implement proper error handling to avoid leaking sensitive information</li>
+        </ul>
+    </section>
+</body>
+</html>
