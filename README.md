@@ -1,2 +1,3 @@
-# theirstory-api
-TheirStory API Documentation
+# TheirStory API
+[TheirStory API Documentation](https://theirstory.github.io/theirstory-api/)
+
