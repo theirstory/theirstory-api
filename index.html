@@ -158,7 +158,12 @@
                     <li><a href="#current-user">Current User Information</a></li>
                     <li><a href="#projects">Projects</a></li>
                     <li><a href="#organization">Organization</a></li>
-                    <li><a href="#stories">Stories</a></li>
+                    <li><a href="#stories">Stories</a>
+                <ul>
+                    <li><a href="#transcript-json">Get Story Transcript JSON</a></li>
+                    <li><a href="#transcript-html">Get Story Transcript HTML</a></li>
+                </ul>
+            </li>
                     <li><a href="#groups">Groups</a></li>
                 </ul>
             </li>
@@ -790,6 +795,170 @@
                 <li><code>page</code>: Current page number</li>
                 <li><code>total</code>: Total number of stories</li>
                 <li><code>items</code>: Array of story objects, each containing details about the recording</li>
+            </ul>
+        </div>
+
+        <h3 id="transcript-json">Get Story Transcript JSON</h3>
+        <p>Retrieves the transcript of a specific story in JSON format, including words, timestamps, and other transcript metadata.</p>
+
+        <div class="endpoint-url">
+            <span class="http-method">GET</span>
+            <code>https://node.theirstory.io/transcripts/{storyid}</code>
+            <button class="copy-btn" onclick="copyToClipboard('https://node.theirstory.io/transcripts/{storyid}')">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
+                    <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
+                </svg>
+            </button>
+        </div>
+
+        <h4>Path Parameters:</h4>
+        <ul>
+            <li><code>storyid</code> (required): The unique identifier of the story</li>
+        </ul>
+
+        <div class="response-section">
+            <h4>Response:</h4>
+            <p>The response is a JSON object containing detailed transcript information, story metadata, and associated media URLs.</p>
+
+            <h4>Response Fields:</h4>
+            <ul class="field-list">
+                <li><code>transcript</code>: Object containing transcript details
+                    <ul>
+                        <li><code>_id</code>: Unique identifier for the transcript</li>
+                        <li><code>created_at</code>: Timestamp when the transcript was created</li>
+                        <li><code>words</code>: Array of word objects, each containing:
+                            <ul>
+                                <li><code>start</code>: Start time of the word in seconds</li>
+                                <li><code>end</code>: End time of the word in seconds</li>
+                                <li><code>text</code>: The actual word</li>
+                            </ul>
+                        </li>
+                        <li><code>paragraphs</code>: Array of paragraph objects with speaker and timing information</li>
+                        <li><code>status</code>: Status of the transcript (e.g., "completed")</li>
+                        <li><code>storyId</code>: ID of the associated story</li>
+                        <li><code>updated_at</code>: Timestamp when the transcript was last updated</li>
+                    </ul>
+                </li>
+                <li><code>story</code>: Object containing story details
+                    <ul>
+                        <li><code>_id</code>: Unique identifier for the story</li>
+                        <li><code>title</code>: Title of the story</li>
+                        <li><code>author</code>: Information about the story's author/creator</li>
+                        <li><code>record_date</code>: Date when the recording was made</li>
+                        <li><code>duration</code>: Duration of the recording in seconds</li>
+                        <li><code>indexes</code>: Array of index objects containing chapter metadata</li>
+                        <li><code>asyncOperations</code>: Array of processing operations performed on the story</li>
+                        <li>Additional metadata about the recording</li>
+                    </ul>
+                </li>
+                <li><code>videoURL</code>: URL to access the video recording</li>
+                <li><code>participants</code>: Array of participants in the recording</li>
+                <li><code>tags</code>: Array of tags associated with the recording</li>
+            </ul>
+
+            <h4>Example Response (truncated):</h4>
+            <pre><code>{
+    "transcript": {
+        "_id": "abc123def456ghi789",
+        "created_at": "2025-01-27T16:46:48.850Z",
+        "words": [
+            {
+                "start": 1.12,
+                "end": 1.44,
+                "text": "Super"
+            },
+            {
+                "start": 1.44,
+                "end": 1.8,
+                "text": "quickly."
+            },
+            {
+                "start": 1.8,
+                "end": 2.16,
+                "text": "Then"
+            },
+            // Additional words...
+        ],
+        "paragraphs": [
+            {
+                "start": 0,
+                "end": 105.6,
+                "speaker": "SPEAKER_S1"
+            }
+        ],
+        "status": "completed",
+        "storyId": "def456ghi789jkl012",
+        "updated_at": "2025-01-27T16:46:48.850Z"
+    },
+    "story": {
+        "_id": "def456ghi789jkl012",
+        "title": "Example Recording",
+        "record_date": "2025-01-27T16:44:51.289Z",
+        "duration": 107,
+        // Additional story metadata...
+    },
+    "videoURL": "https://example.s3.amazonaws.com/uploads/example-id/transcoded.mp4?token=example",
+    "participants": [],
+    "tags": []
+}</code></pre>
+        </div>
+
+        <h3 id="transcript-html">Get Story Transcript HTML</h3>
+        <p>Retrieves the transcript of a specific story in HTML format, suitable for interactive transcripts using the Hyperaudio Lite library.</p>
+
+        <div class="endpoint-url">
+            <span class="http-method">GET</span>
+            <code>https://node.theirstory.io/stories/{storyid}/html</code>
+            <button class="copy-btn" onclick="copyToClipboard('https://node.theirstory.io/stories/{storyid}/html')">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
+                    <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
+                </svg>
+            </button>
+        </div>
+
+        <h4>Path Parameters:</h4>
+        <ul>
+            <li><code>storyid</code> (required): The unique identifier of the story</li>
+        </ul>
+
+        <div class="response-section">
+            <h4>Response:</h4>
+            <p>The response is an HTML document containing the transcript with timing data attributes that make it compatible with interactive transcript libraries like Hyperaudio Lite.</p>
+
+            <h4>Example Response:</h4>
+            <pre><code>&lt;article&gt;
+    &lt;section&gt;
+        &lt;p&gt;
+            &lt;span data-m="0" data-d="0" class="speaker"&gt;SPEAKER_S1: &lt;/span&gt;
+            &lt;span data-m="1120" data-d="320"&gt;Super &lt;/span&gt;
+            &lt;span data-m="1440" data-d="360"&gt;quickly. &lt;/span&gt;
+            &lt;span data-m="1800" data-d="360"&gt;Then &lt;/span&gt;
+            &lt;span data-m="2240" data-d="240"&gt;this &lt;/span&gt;
+            &lt;span data-m="2480" data-d="200"&gt;is &lt;/span&gt;
+            &lt;span data-m="2680" data-d="200"&gt;the &lt;/span&gt;
+            &lt;span data-m="3040" data-d="280"&gt;bug &lt;/span&gt;
+            &lt;span data-m="3320" data-d="320"&gt;where &lt;/span&gt;
+            ...
+        &lt;/p&gt;
+    &lt;/section&gt;
+&lt;/article&gt;</code></pre>
+
+            <h4>HTML Format Details:</h4>
+            <ul class="field-list">
+                <li><code>data-m</code>: Timestamp in milliseconds for when the word begins</li>
+                <li><code>data-d</code>: Duration of the word in milliseconds</li>
+                <li><code>class="speaker"</code>: Denotes a speaker change in the transcript</li>
+            </ul>
+
+            <h4>Usage with Hyperaudio Lite:</h4>
+            <p>This HTML format is designed to work with libraries like Hyperaudio Lite to create interactive transcripts where:</p>
+            <ul>
+                <li>Clicking on a word jumps the audio/video to that timestamp</li>
+                <li>Words are highlighted as the audio/video plays</li>
+                <li>Searching within the transcript is possible</li>
+                <li>Different speakers can be visually distinguished</li>
             </ul>
         </div>
         </section>
