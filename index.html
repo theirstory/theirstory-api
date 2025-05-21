@@ -298,6 +298,43 @@
     "create_gallery": true
 }</code></pre>
         </div>
+       
+
+        <h4>Example code:</h4>
+        <div class="example-code">
+            <pre><code>
+            fetch('https://node.theirstory.io/signin', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json, text/plain, */*'
+                },
+                body: JSON.stringify({
+                    email: email,
+                    password: password
+                })
+            })
+            .then(response => {
+                if (response.ok) {
+                    return response.json();
+                }
+                throw new Error('Login failed');
+            })
+            .then(data => {
+                showMessage('Login successful! Redirecting...', 'success');
+                // Store the token in localStorage for use in the organizations page
+                localStorage.setItem('authToken', data.token);
+                // Redirect to the front page
+                setTimeout(() => {
+                    window.location.href = 'frontpage.html';
+                }, 1500);
+            })
+            .catch(error => {
+                showMessage('Login failed. Please check your credentials.', 'error');
+                console.error('Error:', error);
+            });
+        </div>
+            </code></pre>
         </section>
 
         <div class="endpoint-divider"></div>
