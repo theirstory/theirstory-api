@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TheirStory Shared Story iFrame Embed Examples</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f5f7fa;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 60px 0;
+            text-align: center;
+            margin-bottom: 50px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .subtitle {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .section {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        }
+
+        h2 {
+            color: #444;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 10px;
+        }
+
+        h3 {
+            color: #555;
+            margin: 20px 0 15px 0;
+            font-size: 1.3em;
+        }
+
+        .code-block {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 6px;
+            padding: 15px;
+            margin: 15px 0;
+            overflow-x: auto;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .code-block code {
+            color: #e83e8c;
+        }
+
+        .editable-code {
+            width: 100%;
+            min-height: 100px;
+            padding: 15px;
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            border-radius: 6px;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 14px;
+            line-height: 1.5;
+            resize: vertical;
+            transition: border-color 0.3s;
+        }
+
+        .editable-code:focus {
+            outline: none;
+            border-color: #667eea;
+            background: #fff;
+        }
+
+        .update-button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: background 0.3s;
+        }
+
+        .update-button:hover {
+            background: #5a67d8;
+        }
+
+        .update-button:active {
+            transform: translateY(1px);
+        }
+
+        .example-container {
+            border: 2px dashed #dee2e6;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            background: #fafbfc;
+        }
+
+        .example-label {
+            background: #667eea;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            display: block;
+            margin-bottom: 15px;
+            font-size: 14px;
+            font-weight: 600;
+            width: fit-content;
+        }
+
+        .responsive-wrapper {
+            position: relative;
+            width: 100%;
+            margin: 20px 0;
+        }
+
+        iframe {
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .parameter-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .parameter-card {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 20px;
+        }
+
+        .parameter-card h4 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .parameter-card code {
+            background: #e9ecef;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 13px;
+        }
+
+        .note {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 6px;
+            padding: 15px;
+            margin: 20px 0;
+            display: flex;
+            align-items: start;
+        }
+
+        .note-icon {
+            font-size: 20px;
+            margin-right: 10px;
+            color: #f39c12;
+        }
+
+        .success-indicator {
+            color: #28a745;
+            font-weight: 600;
+            margin-left: 10px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .success-indicator.show {
+            opacity: 1;
+        }
+
+        .preview-container {
+            min-height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .preview-placeholder {
+            color: #6c757d;
+            font-style: italic;
+        }
+
+        .important-style {
+            width: 800px !important;
+            height: 500px !important;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            
+            h1 {
+                font-size: 2em;
+            }
+            
+            .section {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>TheirStory Shared Story iFrame Embed Examples</h1>
+            <p class="subtitle">Interactive guide to embedding TheirStory content on your website</p>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- Interactive Embed Editor -->
+        <section class="section" style="background: linear-gradient(135deg, #f5f7ff 0%, #f0f2ff 100%); border: 2px solid #667eea;">
+            <h2>🚀 Interactive Embed Editor</h2>
+            <p>Edit the iframe code below and click "Update Preview" to see your changes in real-time:</p>
+            
+            <textarea class="editable-code" id="editableCode">
+<iframe width="100%" height="720" src="https://sharestaging.theirstory.io/story/6634f128c36a411949eaf80d" title="Larry Augustin interview with FOSSDA" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></textarea>
+            
+            <button class="update-button" onclick="updatePreview()">Update Preview</button>
+            <span class="success-indicator" id="successIndicator">✓ Updated</span>
+
+            <div class="example-container">
+                <span class="example-label">Live Preview</span>
+                <div class="preview-container" id="previewContainer">
+                    <iframe width="100%" height="720" src="https://sharestaging.theirstory.io/story/6634f128c36a411949eaf80d" title="Larry Augustin interview with FOSSDA" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+                </div>
+            </div>
+
+            <div class="note">
+                <span class="note-icon">💡</span>
+                <div>
+                    <strong>Try these modifications:</strong>
+                    <ul style="margin-left: 20px; margin-top: 10px;">
+                        <li>Change width to "600" or "50%"</li>
+                        <li>Add style="max-width: 800px;"</li>
+                        <li>Add URL parameters like ?link-back=false</li>
+                        <li>Modify the height attribute</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Basic Embed Section -->
+        <section class="section">
+            <h2>Basic Embed</h2>
+            <p>The default embed code with 100% width and 720px height:</p>
+            
+            <div class="code-block">
+                <code>&lt;iframe width="100%" height="720" src="https://sharestaging.theirstory.io/story/6634f128c36a411949eaf80d" title="Larry Augustin interview with FOSSDA" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen&gt;&lt;/iframe&gt;</code>
+            </div>
+
+            <div class="example-container">
+                <span class="example-label">Live Example</span>
+                <iframe width="100%" height="720" src="https://sharestaging.theirstory.io/story/6634f128c36a411949eaf80d" title="Larry Augustin interview with FOSSDA" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+            </div>
+        </section>
+
+        <!-- Fixed Width Examples -->
+        <section class="section">
+            <h2>Fixed Width Examples</h2>
+            
+            <h3>Small Width (400px)</h3>
+            <textarea class="editable-code" id="smallWidthCode">
+<iframe width="400" height="720" src="https://sharestaging.theirstory.io/story/6634f128c36a411949eaf80d" title="Larry Augustin interview with FOSSDA" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></textarea>
+            <button class="update-button" onclick="updateExample('smallWidth')">Update Preview</button>
+            <div class="example-container">
+                <span class="example-label">400px Width</span>
+                <div id="smallWidthPreview">
+                    <iframe width="400" height="720" src="https://sharestaging.theirstory.io/story/6634f128c36a411949eaf80d" title="Larry Augustin interview with FOSSDA" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+                </div>
+            </div>
+
+            <h3>Medium Width (600px)</h3>
+            <textarea class="editable-code" id="mediumWidthCode">
+<iframe width="600" height="720" src="https://sharestaging.theirstory.io/story/6634f128c36a411949eaf80d" title="Larry Augustin interview with FOSSDA" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></textarea>
+            <button class="update-button" onclick="updateExample('mediumWidth')">Update Preview</button>
+            <div class="example-container">
+                <span class="example-label">600px Width</span>
+                <div id="mediumWidthPreview">
+                    <iframe width="600" height="720" src="https://sharestaging.theirstory.io/story/6634f128c36a411949eaf80d" title="Larry Augustin interview with FOSSDA" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+                </div>
+            </div>
+        </section>
+
+        <!-- Responsive Width Examples -->
+        <section class="section">
+            <h2>Responsive Width with max-width and min-width</h2>
+            
+            <h3>Responsive with max-width</h3>
+            <p>Limits the maximum width while allowing the iframe to scale down on smaller screens:</p>
+            <textarea class="editable-code" id="maxWidthCode">
+<iframe style="width: 100%; max-width: 800px;" height="720" src="https://sharestaging.theirstory.io/story/6634f128c36a411949eaf80d" title="Larry Augustin interview with FOSSDA" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></textarea>
+            <button class="update-button" onclick="updateExample('maxWidth')">Update Preview</button>
+            <div class="example-container">
+                <span class="example-label">100% Width with max-width: 800px</span>
+                <div id="maxWidthPreview">
+                    <iframe style="width: 100%; max-width: 800px;" height="720" src="https://sharestaging.theirstory.io/story/6634f128c36a411949eaf80d" title="Larry Augustin interview with FOSSDA" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+                </div>
+            </div>
+
+            <h3>Responsive with min-width and max-width</h3>
+            <p>Ensures the iframe stays within a specific size range:</p>
+            <textarea class="editable-code" id="minMaxWidthCode">
+<iframe style="width: 100%; min-width: 300px; max-width: 600px;" height="500" src="https://sharestaging.theirstory.io/story/6634f128c36a411949eaf80d" title="Larry Augustin interview with FOSSDA" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></textarea>
+            <button class="update-button" onclick="updateExample('minMaxWidth')">Update Preview</button>
+            <div class="example-container">
+                <span class="example-label">Responsive: min-width: 300px, max-width: 600px</span>
+                <div id="minMaxWidthPreview">
+                    <iframe style="width: 100%; min-width: 300px; max-width: 600px;" height="500" src="https://sharestaging.theirstory.io/story/6634f128c36a411949eaf80d" title="Larry Augustin interview with FOSSDA" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+                </div>
+            </div>
+        </section>
+
+        <!-- Using !important -->
+        <section class="section">
+            <h2>Using !important to Override Styles</h2>
+            <p>When you need to override existing styles, you can use !important:</p>
+            
+            <textarea class="editable-code" id="importantCode">
+<iframe style="width: 800px !important; height: 500px !important;" src="https://sharestaging.theirstory.io/story/6634f128c36a411949eaf80d" title="Larry Augustin interview with FOSSDA" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></textarea>
+            <button class="update-button" onclick="updateExample('important')">Update Preview</button>
+
+            <div class="note">
+                <span class="note-icon">💡</span>
+                <div>
+                    <strong>Note:</strong> Using !important ensures your styles take precedence over any other CSS rules that might affect the iframe dimensions.
+                </div>
+            </div>
+
+            <div class="example-container">
+                <span class="example-label">With !important Override</span>
+                <div id="importantPreview">
+                    <iframe style="width: 800px !important; height: 500px !important;" src="https://sharestaging.theirstory.io/story/6634f128c36a411949eaf80d" title="Larry Augustin interview with FOSSDA" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+                </div>
+            </div>
+        </section>
+
+        <!-- URL Parameters -->
+        <section class="section">
+            <h2>URL Parameters</h2>
+            <p>Customize the embedded story behavior using these URL parameters:</p>
+            
+            <div class="parameter-grid">
+                <div class="parameter-card">
+                    <h4>search</h4>
+                    <p>Highlight specific search terms</p>
+                    <code>?search=searchterm</code>
+                </div>
+                
+                <div class="parameter-card">
+                    <h4>link-back</h4>
+                    <p>Show/hide link back to TheirStory</p>
+                    <code>?link-back=false</code>
+                    <small>(default: true)</small>
+                </div>
+                
+                <div class="parameter-card">
+                    <h4>autoscroll</h4>
+                    <p>Enable automatic scrolling</p>
+                    <code>?autoscroll=true</code>
+                    <small>(default: false)</small>
+                </div>
+                
+                <div class="parameter-card">
+                    <h4>poster</h4>
+                    <p>Custom poster image URL</p>
+                    <code>?poster=url-of-image</code>
+                </div>
+                
+                <div class="parameter-card">
+                    <h4>highlight-words</h4>
+                    <p>Enable/disable word highlighting</p>
+                    <code>?highlight-words=false</code>
+                    <small>(default: true)</small>
+                </div>
+            </div>
+
+            <h3>Example with Parameters</h3>
+            <p>Embed with custom poster image and no link-back:</p>
+            <textarea class="editable-code" id="parametersCode">
+<iframe width="100%" height="720" src="https://sharestaging.theirstory.io/story/6634f128c36a411949eaf80d?poster=https://lab.theirstory.io/example-content/example-poster.webp&link-back=false" title="Larry Augustin interview with FOSSDA" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></textarea>
+            <button class="update-button" onclick="updateExample('parameters')">Update Preview</button>
+            
+            <div class="example-container">
+                <span class="example-label">With Custom Poster & No Link-back</span>
+                <div id="parametersPreview">
+                    <iframe width="100%" height="720" src="https://sharestaging.theirstory.io/story/6634f128c36a411949eaf80d?poster=https://lab.theirstory.io/example-content/example-poster.webp&link-back=false" title="Larry Augustin interview with FOSSDA" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+                </div>
+            </div>
+
+            <h3>Multiple Parameters Example</h3>
+            <p>Combining multiple parameters:</p>
+            <textarea class="editable-code" id="multiParametersCode">
+<iframe width="100%" height="720" src="https://sharestaging.theirstory.io/story/6634f128c36a411949eaf80d?autoscroll=true&highlight-words=false&search=open+source" title="Larry Augustin interview with FOSSDA" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></textarea>
+            <button class="update-button" onclick="updateExample('multiParameters')">Update Preview</button>
+            
+            <div class="example-container">
+                <span class="example-label">Autoscroll + No Highlights + Search Term</span>
+                <div id="multiParametersPreview">
+                    <iframe width="100%" height="720" src="https://sharestaging.theirstory.io/story/6634f128c36a411949eaf80d?autoscroll=true&highlight-words=false&search=open+source" title="Larry Augustin interview with FOSSDA" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+                </div>
+            </div>
+        </section>
+
+        <!-- Best Practices -->
+        <section class="section">
+            <h2>Best Practices</h2>
+            <div class="note">
+                <span class="note-icon">✅</span>
+                <div>
+                    <strong>Recommendations:</strong>
+                    <ul style="margin-left: 20px; margin-top: 10px;">
+                        <li>Use responsive widths (%) with max-width for better mobile compatibility</li>
+                        <li>Consider your site's layout when choosing heights</li>
+                        <li>Test parameter combinations before deployment</li>
+                        <li>Always include the allowfullscreen attribute for video content</li>
+                        <li>Use meaningful titles for accessibility</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        function updatePreview() {
+            const code = document.getElementById('editableCode').value;
+            const previewContainer = document.getElementById('previewContainer');
+            const successIndicator = document.getElementById('successIndicator');
+            
+            try {
+                previewContainer.innerHTML = code;
+                
+                // Show success indicator
+                successIndicator.classList.add('show');
+                setTimeout(() => {
+                    successIndicator.classList.remove('show');
+                }, 2000);
+            } catch (error) {
+                previewContainer.innerHTML = '<p class="preview-placeholder">Invalid iframe code. Please check your syntax.</p>';
+            }
+        }
+
+        function updateExample(exampleId) {
+            const code = document.getElementById(exampleId + 'Code').value;
+            const previewContainer = document.getElementById(exampleId + 'Preview');
+            
+            try {
+                previewContainer.innerHTML = code;
+            } catch (error) {
+                previewContainer.innerHTML = '<p class="preview-placeholder">Invalid iframe code. Please check your syntax.</p>';
+            }
+        }
+
+        // Auto-resize textareas
+        document.querySelectorAll('.editable-code').forEach(textarea => {
+            const autoResize = () => {
+                textarea.style.height = 'auto';
+                textarea.style.height = textarea.scrollHeight + 'px';
+            };
+            
+            textarea.addEventListener('input', autoResize);
+            autoResize();
+        });
+    </script>
+</body>
+</html>
