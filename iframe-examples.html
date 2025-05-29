@@ -225,6 +225,50 @@
             height: 500px !important;
         }
 
+        .iframe-wrapper {
+            position: relative;
+            display: inline-block;
+            width: 100%;
+        }
+
+        .loading-spinner {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 50px;
+            height: 50px;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .loading-spinner::after {
+            content: "";
+            display: block;
+            width: 40px;
+            height: 40px;
+            margin: 5px;
+            border-radius: 50%;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .iframe-wrapper iframe {
+            display: block;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .iframe-wrapper iframe.loaded {
+            opacity: 1;
+        }
+
         @media (max-width: 768px) {
             .container {
                 padding: 10px;
@@ -469,13 +513,30 @@
             const successIndicator = document.getElementById('successIndicator');
             
             try {
-                previewContainer.innerHTML = code;
+                // Parse the iframe code and wrap it
+                const tempDiv = document.createElement('div');
+                tempDiv.innerHTML = code;
+                const iframe = tempDiv.querySelector('iframe');
                 
-                // Show success indicator
-                successIndicator.classList.add('show');
-                setTimeout(() => {
-                    successIndicator.classList.remove('show');
-                }, 2000);
+                if (iframe) {
+                    previewContainer.innerHTML = `
+                        <div class="iframe-wrapper">
+                            <div class="loading-spinner"></div>
+                            ${code}
+                        </div>
+                    `;
+                    
+                    // Setup iframe load handler
+                    setupIframeLoader(previewContainer.querySelector('iframe'));
+                    
+                    // Show success indicator
+                    successIndicator.classList.add('show');
+                    setTimeout(() => {
+                        successIndicator.classList.remove('show');
+                    }, 2000);
+                } else {
+                    previewContainer.innerHTML = '<p class="preview-placeholder">Invalid iframe code. Please check your syntax.</p>';
+                }
             } catch (error) {
                 previewContainer.innerHTML = '<p class="preview-placeholder">Invalid iframe code. Please check your syntax.</p>';
             }
@@ -486,10 +547,39 @@
             const previewContainer = document.getElementById(exampleId + 'Preview');
             
             try {
-                previewContainer.innerHTML = code;
+                // Parse the iframe code and wrap it
+                const tempDiv = document.createElement('div');
+                tempDiv.innerHTML = code;
+                const iframe = tempDiv.querySelector('iframe');
+                
+                if (iframe) {
+                    previewContainer.innerHTML = `
+                        <div class="iframe-wrapper">
+                            <div class="loading-spinner"></div>
+                            ${code}
+                        </div>
+                    `;
+                    
+                    // Setup iframe load handler
+                    setupIframeLoader(previewContainer.querySelector('iframe'));
+                } else {
+                    previewContainer.innerHTML = '<p class="preview-placeholder">Invalid iframe code. Please check your syntax.</p>';
+                }
             } catch (error) {
                 previewContainer.innerHTML = '<p class="preview-placeholder">Invalid iframe code. Please check your syntax.</p>';
             }
+        }
+
+        function setupIframeLoader(iframe) {
+            if (!iframe) return;
+            
+            iframe.addEventListener('load', function() {
+                this.classList.add('loaded');
+                const spinner = this.parentElement.querySelector('.loading-spinner');
+                if (spinner) {
+                    spinner.style.display = 'none';
+                }
+            });
         }
 
         // Auto-resize textareas
@@ -501,6 +591,21 @@
             
             textarea.addEventListener('input', autoResize);
             autoResize();
+        });
+
+        // Setup loaders for all initial iframes
+        document.addEventListener('DOMContentLoaded', function() {
+            // Wrap all existing iframes with loader
+            document.querySelectorAll('iframe').forEach(iframe => {
+                if (!iframe.parentElement.classList.contains('iframe-wrapper')) {
+                    const wrapper = document.createElement('div');
+                    wrapper.className = 'iframe-wrapper';
+                    wrapper.innerHTML = '<div class="loading-spinner"></div>';
+                    iframe.parentNode.insertBefore(wrapper, iframe);
+                    wrapper.appendChild(iframe);
+                    setupIframeLoader(iframe);
+                }
+            });
         });
     </script>
 </body>
