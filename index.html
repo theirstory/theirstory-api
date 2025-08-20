@@ -1084,9 +1084,11 @@
 
         <h4>Request Body:</h4>
         <p>The request should include the type of media required (audio or video).</p>
-        <pre><code>{
-          "format": "video"
-        }</code></pre>
+        <pre><code>
+{
+    "format": "video"
+}
+        </code></pre>
 
         <div class="response-section">
             <h4>Response:</h4>
@@ -1137,9 +1139,7 @@ fetch(`https://node.theirstory.io/stories/${storyId}/publish_media`, {
     console.error('Error:', error);
     modalTitle.textContent = 'Error';
     modalBody.innerHTML = `
-        <div class="error-message">
             Failed to publish ${format}: ${error.message}
-        </div>
     `;
 })
         </div>
