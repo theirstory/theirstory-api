@@ -1024,6 +1024,7 @@
             <h3>Publishing</h3>
         <p>There are cases where it's convenient to publish (non expiring) media assets. We provide a number of API endpoints allowing the publishing, unpublishing and interrogation of audio and video assets on our Mux.com based CDN.</p>
 
+        <h4>publish</h4>
         <div class="endpoint-url">
             <span class="http-method">POST</span>
             <code>https://node.theirstory.io/stories/{storyId}/publish_media</code>
@@ -1034,12 +1035,13 @@
                 </svg>
             </button>
         </div>
-
+        
         <h4>Request Body:</h4>
         <p>The request should include the type of media required (audio or video).</p>
-        <pre><code>{
-          "format": "video"
-        }</code></pre>
+<pre><code>
+{
+   "format": "video"
+}</code></pre>
 
         <div class="response-section">
             <h4>Response:</h4>
@@ -1051,9 +1053,10 @@
             </code></pre>
         </div>
 
-        <pre><code>{
-          "format": "audio"
-        }</code></pre>
+<pre><code>
+{
+   "format": "audio"
+}</code></pre>
 
         <div class="response-section">
             <h4>Response:</h4>
@@ -1061,13 +1064,13 @@
 
             <h4>Response Fields:</h4>
             <pre><code>
-            "url": "https://stream.mux.com/{uid}/audio.m4a"    
+"url": "https://stream.mux.com/{uid}/audio.m4a"    
             </code></pre>
         </div>
             
         <p>NOTE: Assets may take up to a minute to be created.</p>
 
-
+         <h4>unpublish</h4>
          <div class="endpoint-url">
             <span class="http-method">POST</span>
             <code>https://node.theirstory.io/stories/{storyId}/unpublish_media</code>
@@ -1091,14 +1094,15 @@
 
             <h4>Response Fields:</h4>
             <pre><code>
-            "message": "video deleted",
-            "url": "https://stream.mux.com/{uid}/highest.mp4"    
+"message": "video deleted",
+"url": "https://stream.mux.com/{uid}/highest.mp4"    
             </code></pre>
         </div>
 
-        <pre><code>{
-          "format": "audio"
-        }</code></pre>
+        <pre><code>
+{
+   "format": "audio"
+}</code></pre>
 
         <div class="response-section">
             <h4>Response:</h4>
@@ -1106,8 +1110,8 @@
 
             <h4>Response Fields:</h4>
             <pre><code>
-            "message": "audio deleted",
-            "url": "https://stream.mux.com/{uid}/audio.m4a"    
+"message": "audio deleted",
+"url": "https://stream.mux.com/{uid}/audio.m4a"    
             </code></pre>
         </div>
        
@@ -1115,29 +1119,29 @@
         <h4>Example code:</h4>
         <div class="example-code">
             <pre><code>
-            fetch(`https://node.theirstory.io/stories/${storyId}/publish_media`, {
-                method: 'POST',
-                headers: {
-                    'Authorization': token,
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json',
-                },
-                body: JSON.stringify({ format: format })
-            })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error(`Failed to publish ${format}`);
-                }
-                return response.json();
-            }).catch(error => {
-                console.error('Error:', error);
-                modalTitle.textContent = 'Error';
-                modalBody.innerHTML = `
-                    <div class="error-message">
-                        Failed to publish ${format}: ${error.message}
-                    </div>
-                `;
-            })
+fetch(`https://node.theirstory.io/stories/${storyId}/publish_media`, {
+    method: 'POST',
+    headers: {
+        'Authorization': token,
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+    },
+    body: JSON.stringify({ format: format })
+})
+.then(response => {
+    if (!response.ok) {
+        throw new Error(`Failed to publish ${format}`);
+    }
+    return response.json();
+}).catch(error => {
+    console.error('Error:', error);
+    modalTitle.textContent = 'Error';
+    modalBody.innerHTML = `
+        <div class="error-message">
+            Failed to publish ${format}: ${error.message}
+        </div>
+    `;
+})
         </div>
             </code></pre>
         </section>
