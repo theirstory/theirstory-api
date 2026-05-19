@@ -20,24 +20,8 @@
       --note-border: #0969da;
       --warn-bg: #ffebe9;
       --warn-border: #cf222e;
-    }
-    @media (prefers-color-scheme: dark) {
-      :root {
-        --bg: #0d1117;
-        --text: #e6edf3;
-        --muted: #8b949e;
-        --link: #2f81f7;
-        --border: #30363d;
-        --border-soft: #21262d;
-        --code-bg: #161b22;
-        --code-text: #e6edf3;
-        --callout-bg: #2d2611;
-        --callout-border: #9e6a03;
-        --note-bg: #0c2d6b;
-        --note-border: #1f6feb;
-        --warn-bg: #3c0e10;
-        --warn-border: #f85149;
-      }
+      --sidebar-bg: #f6f8fa;
+      --sidebar-active: #0969da;
     }
     * { box-sizing: border-box; }
     html { -webkit-text-size-adjust: 100%; }
@@ -49,10 +33,80 @@
       color: var(--text);
       background: var(--bg);
     }
-    .container {
-      max-width: 920px;
+    .layout {
+      max-width: 1280px;
       margin: 0 auto;
+      display: grid;
+      grid-template-columns: 260px minmax(0, 1fr);
+      gap: 48px;
       padding: 32px 24px 96px;
+    }
+    .sidebar {
+      position: sticky;
+      top: 32px;
+      align-self: start;
+      max-height: calc(100vh - 64px);
+      overflow-y: auto;
+      padding-right: 8px;
+    }
+    .sidebar h2 {
+      margin: 0 0 12px;
+      padding: 0;
+      border: none;
+      font-size: 0.85em;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .sidebar ul {
+      list-style: none;
+      padding: 0;
+      margin: 0 0 16px;
+    }
+    .sidebar li { margin: 0; }
+    .sidebar li + li { margin-top: 0; }
+    .sidebar a {
+      display: block;
+      padding: 4px 10px;
+      font-size: 0.9em;
+      color: var(--text);
+      border-left: 2px solid transparent;
+      margin-left: -2px;
+      line-height: 1.4;
+    }
+    .sidebar a:hover {
+      color: var(--link);
+      text-decoration: none;
+    }
+    .sidebar ul ul {
+      margin: 0 0 8px;
+      padding-left: 0;
+    }
+    .sidebar ul ul a {
+      padding-left: 22px;
+      font-size: 0.85em;
+      color: var(--muted);
+    }
+    .sidebar ul ul ul a {
+      padding-left: 34px;
+      font-size: 0.8em;
+    }
+    .content {
+      min-width: 0;
+    }
+    @media (max-width: 900px) {
+      .layout {
+        grid-template-columns: 1fr;
+        gap: 24px;
+      }
+      .sidebar {
+        position: static;
+        max-height: none;
+        padding: 16px 20px;
+        background: var(--sidebar-bg);
+        border-radius: 6px;
+      }
     }
     h1, h2, h3, h4, h5 {
       line-height: 1.25;
@@ -150,19 +204,6 @@
       color: var(--link);
       margin-right: 0.5em;
     }
-    .toc {
-      background: var(--code-bg);
-      padding: 16px 24px;
-      border-radius: 6px;
-      margin: 0 0 2em;
-    }
-    .toc ul { padding-left: 1.4em; }
-    .toc > ul { padding-left: 1.2em; }
-    .toc h2 {
-      margin-top: 0;
-      border-bottom: none;
-      font-size: 1.1em;
-    }
     hr {
       border: 0;
       border-top: 1px solid var(--border-soft);
@@ -177,18 +218,16 @@
   </style>
 </head>
 <body>
-<div class="container">
+<div class="layout">
 
-<h1>TheirStory API Guide</h1>
-
-<div class="toc">
+<aside class="sidebar">
   <h2>Contents</h2>
   <ul>
     <li><a href="#overview">Overview</a></li>
     <li><a href="#base-urls">Base URL</a></li>
     <li><a href="#authentication">Authentication</a>
       <ul>
-        <li><a href="#auth-header">Authorization header format (important)</a></li>
+        <li><a href="#auth-header">Authorization header format</a></li>
         <li><a href="#token-storage">Token storage in browser clients</a></li>
         <li><a href="#token-lifetime">Token lifetime and refresh</a></li>
       </ul>
@@ -223,7 +262,11 @@
     <li><a href="#versioning">Versioning</a></li>
     <li><a href="#support">Support</a></li>
   </ul>
-</div>
+</aside>
+
+<main class="content">
+
+<h1>TheirStory API Guide</h1>
 
 <h2 id="overview">Overview</h2>
 
@@ -1046,6 +1089,7 @@ const { url } = await response.json();</code></pre>
   <li>Embedded iframe examples: <a href="iframe-examples.html">iframe-examples.html</a>.</li>
 </ul>
 
+</main>
 </div>
 </body>
 </html>
