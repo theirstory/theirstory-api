@@ -248,6 +248,7 @@
         <li><a href="#organization">Organization</a></li>
         <li><a href="#stories">Stories</a>
           <ul>
+            <li><a href="#custom-metadata">Custom metadata</a></li>
             <li><a href="#transcript-json">Get story transcript JSON</a></li>
             <li><a href="#transcript-html">Get story transcript HTML</a></li>
           </ul>
@@ -826,7 +827,7 @@ Authorization: &lt;jwt&gt;</code></pre>
   </tbody>
 </table>
 
-<p>Each story object contains at minimum: <code>_id</code>, <code>title</code>, <code>record_date</code> (ISO 8601), <code>duration</code> (seconds), <code>author</code>, <code>indexes</code> (chapter metadata), and <code>asyncOperations</code> (processing history). The full per-story shape matches the <code>story</code> field in the <a href="#transcript-json">transcript JSON response</a> &mdash; use that as the canonical reference.</p>
+<p>Each story object contains at minimum: <code>_id</code>, <code>title</code>, <code>record_date</code> (ISO 8601), <code>duration</code> (seconds), <code>author</code>, <code>indexes</code> (chapter metadata), <code>asyncOperations</code> (processing history), <code>is_testimonial</code>, and <code>metadata_fields</code> (see <a href="#custom-metadata">Custom metadata</a>). The full per-story shape matches the <code>story</code> field in the <a href="#transcript-json">transcript JSON response</a> &mdash; use that as the canonical reference.</p>
 
 <h4>Example response</h4>
 
@@ -841,10 +842,57 @@ Authorization: &lt;jwt&gt;</code></pre>
       "duration": 107,
       "author": { "id": 12345, "first_name": "John", "last_name": "Doe" },
       "indexes": [],
-      "asyncOperations": []
+      "asyncOperations": [],
+      "is_testimonial": false,
+      "metadata_fields": [
+        { "key": "title", "label": "Title", "value": "Example Recording", "answerType": "Text", "required": true },
+        { "key": "location", "label": "Location", "value": "Boston", "answerType": "Text", "required": false }
+      ]
     }
   ]
 }</code></pre>
+
+<h4 id="custom-metadata">Custom metadata</h4>
+
+<p>Each story carries a <code>metadata_fields</code> array of custom metadata entries. For recorded interviews and uploads the entries come from the project's metadata schema; for testimonials they come from the prep session that produced the recording. <code>is_testimonial</code> indicates the source: <code>false</code> for a project schema, <code>true</code> for a prep session schema.</p>
+
+<p>Field keys are stable but their format depends on the source: project schema fields use human-readable keys (e.g. <code>location</code>), prep-session fields use opaque identifiers.</p>
+
+<h5>Entry shape</h5>
+
+<table>
+  <thead>
+    <tr><th>Field</th><th>Type</th><th>Description</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>key</code></td><td>string</td><td>Stable field identifier.</td></tr>
+    <tr><td><code>label</code></td><td>string</td><td>Human-readable field name.</td></tr>
+    <tr><td><code>value</code></td><td>string | string[] | number | boolean | null</td><td>The stored value. <code>null</code> or empty when unset.</td></tr>
+    <tr><td><code>answerType</code></td><td>string</td><td>One of <code>Text</code>, <code>Numeric</code>, <code>Date</code>, <code>Multi-Select</code>, <code>Dropdown List</code>, <code>Radio Button</code>, <code>Descriptive Text</code>.</td></tr>
+    <tr><td><code>required</code></td><td>boolean</td><td>Whether the field is required in the schema.</td></tr>
+    <tr><td><code>options</code></td><td>string[]</td><td>Allowed values for enumerated types (<code>Multi-Select</code>, <code>Dropdown List</code>, <code>Radio Button</code>). Omitted when not applicable.</td></tr>
+    <tr><td><code>deleted</code></td><td>boolean</td><td>Present and <code>true</code> only for fields removed from the schema that still carry a stored value on this story. Omitted otherwise.</td></tr>
+  </tbody>
+</table>
+
+<h5>Example</h5>
+
+<pre><code>{
+  "is_testimonial": false,
+  "metadata_fields": [
+    { "key": "title", "label": "Title", "value": "Grandma's story", "answerType": "Text", "required": true },
+    { "key": "location", "label": "Location", "value": "Boston", "answerType": "Text", "required": false },
+    { "key": "subject", "label": "Subject", "value": ["family", "immigration"], "answerType": "Multi-Select", "required": false, "options": ["family", "immigration", "work"] }
+  ]
+}</code></pre>
+
+<h5>Example usage</h5>
+
+<pre><code>story.metadata_fields.forEach((field) =&gt; {
+  if (field.deleted) return;
+  const value = Array.isArray(field.value) ? field.value.join(", ") : field.value;
+  render(field.label, value, field.answerType, field.required);
+});</code></pre>
 
 <h4 id="transcript-json">Get story transcript JSON</h4>
 
